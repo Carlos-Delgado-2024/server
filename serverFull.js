@@ -1,6 +1,7 @@
 const http = require('http');
 const { Server } = require('socket.io');
 const {BuscarCollection, listenChanges} = require('./functions/collection')
+const PORT = process.env.PORT || 5000
 
 // Crear el servidor HTTP
 const server = http.createServer();
@@ -33,6 +34,6 @@ io.on('connection', async(socket) => {
 });
 
 // Iniciar el servidor en el puerto 3000
-server.listen(5000, () => {
-  console.log('Servidor escuchando en el puerto 5000');
+server.listen(PORT, () => {
+  console.log('Servidor escuchando en el puerto: ',PORT);
 });
