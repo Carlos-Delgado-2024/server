@@ -1,2 +1,2 @@
-const port = 5000
+const port = process.env.PORT
 console.log(port)
