@@ -1,6 +1,6 @@
 const http = require('http');
 const { Server } = require('socket.io');
-const {BuscarCollection, listenChanges} = require('./functions/collection')
+const {BuscarCollection, listenChanges} = require('../functions/collection')
 const PORT = process.env.PORT || 5000
 
 // Crear el servidor HTTP
