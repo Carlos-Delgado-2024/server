@@ -1,3 +1,3 @@
-const port = process.env.PORT
+const port = process.env.FIREBASE_ADMIN_SDK_JSON
 
-console.log('este es el puerto: ',port)
+console.log('este es el firebase: ',port)
