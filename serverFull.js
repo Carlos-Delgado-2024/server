@@ -19,7 +19,7 @@ io.on('connection', async(socket) => {
     console.log('Un usuario se ha conectado');
     //datos de empresa
     const empresa = await BuscarCollection('empresa')
-    socket.emit('CollectionEmpresa', empresa);  // Enviar el número de vuelta al cliente
+    socket.emit('CollectionEmpresa', empresa);  
     listenChanges('empresa',io)
     //datos de sorteo
     const sorteos = await BuscarCollection('sorteos')

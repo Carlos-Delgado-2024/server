@@ -23,14 +23,15 @@ const listenChanges = (collectionName, io) => {
     const collectionRef = db.collection(collectionName);
     
     // Escuchar cambios en la colección
-    collectionRef.onSnapshot(snapshot => {
+    collectionRef.onSnapshot( snapshot => {
       let changes = [];
-      snapshot.docChanges().forEach(change => {
+      snapshot.docChanges().forEach(async change => {
         if (change.type === 'added') {
           changes.push({ id: change.doc.id, ...change.doc.data() });
         } else if (change.type === 'modified') {
-            console.log('cambioi')
-          changes.push({ id: change.doc.id, ...change.doc.data() });
+            const x =await BuscarCollection(collectionName)
+            await io.emit('collectionChanged', { collection: collectionName, x })
+          //changes.push({ id: change.doc.id, ...change.doc.data() });
         } else if (change.type === 'removed') {
           changes.push({ id: change.doc.id });
         }
