@@ -29,9 +29,12 @@ const listenChanges = (collectionName, io) => {
         if (change.type === 'added') {
           changes.push({ id: change.doc.id, ...change.doc.data() });
         } else if (change.type === 'modified') {
-            const x =await BuscarCollection(collectionName)
-            await io.emit('collectionChanged', { collection: collectionName, x })
-          //changes.push({ id: change.doc.id, ...change.doc.data() });
+            if(collectionName==='sorteos'){
+              const x =await BuscarCollection(collectionName)
+              await io.emit('collectionChanged', { collection: collectionName, x })
+            }else{
+              changes.push({ id: change.doc.id, ...change.doc.data() });
+            }
         } else if (change.type === 'removed') {
           changes.push({ id: change.doc.id });
         }
