@@ -2,8 +2,7 @@ const http = require('http');
 const { Server } = require('socket.io');
 const { BuscarCollection, listenChanges} = require('./functions/collection')
 const { Login } = require('./functions/login')
-const { admin } = require('./config/firebase')
-const { setAdminRole } = require('./functions/newAdmin')
+const PORT = process.env.PORT || 5000
 
 // Crear el servidor HTTP
 const server = http.createServer();
@@ -15,7 +14,6 @@ const io = new Server(server, {
     methods: ['GET', 'POST'],  // Métodos permitidos
   }
 });
-//setAdminRole('FWdTFhP1S8NbKisCboxdK3o1UEH2')
 // Manejar la conexión con Socket.IO
 io.on('connection', async(socket) => {
     console.log('Un usuario se ha conectado');
@@ -40,6 +38,6 @@ io.on('connection', async(socket) => {
 });
 
 // Iniciar el servidor en el puerto 3000
-server.listen(5000, () => {
-  console.log('Servidor escuchando en el puerto 5000');
+server.listen(PORT, () => {
+  console.log('Servidor escuchando en el puerto: ',PORT);
 });
