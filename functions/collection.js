@@ -1,4 +1,4 @@
-const db = require('../config/firebase');
+const {db} = require('../config/firebase');
 
 const BuscarCollection = async(CollectionName)=>{
     try{
@@ -15,7 +15,7 @@ const BuscarCollection = async(CollectionName)=>{
         return results
     }catch (error) {
         console.error('Error fetching collection:', error);
-        return error('Error fetching collection:', error);
+        return ('Error fetching collection:', error);
     }
 
 }
@@ -29,12 +29,9 @@ const listenChanges = (collectionName, io) => {
         if (change.type === 'added') {
           changes.push({ id: change.doc.id, ...change.doc.data() });
         } else if (change.type === 'modified') {
-            if(collectionName==='sorteos'){
-              const x =await BuscarCollection(collectionName)
-              await io.emit('collectionChanged', { collection: collectionName, x })
-            }else{
-              changes.push({ id: change.doc.id, ...change.doc.data() });
-            }
+            const x =await BuscarCollection(collectionName)
+            await io.emit('collectionChanged', { collection: collectionName, x })
+          //changes.push({ id: change.doc.id, ...change.doc.data() });
         } else if (change.type === 'removed') {
           changes.push({ id: change.doc.id });
         }

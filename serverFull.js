@@ -1,7 +1,9 @@
 const http = require('http');
 const { Server } = require('socket.io');
-const {BuscarCollection, listenChanges} = require('./functions/collection')
-const PORT = process.env.PORT || 5000
+const { BuscarCollection, listenChanges} = require('./functions/collection')
+const { Login } = require('./functions/login')
+const { admin } = require('./config/firebase')
+const { setAdminRole } = require('./functions/newAdmin')
 
 // Crear el servidor HTTP
 const server = http.createServer();
@@ -13,18 +15,22 @@ const io = new Server(server, {
     methods: ['GET', 'POST'],  // Métodos permitidos
   }
 });
-
+//setAdminRole('FWdTFhP1S8NbKisCboxdK3o1UEH2')
 // Manejar la conexión con Socket.IO
 io.on('connection', async(socket) => {
     console.log('Un usuario se ha conectado');
     //datos de empresa
     const empresa = await BuscarCollection('empresa')
-    socket.emit('CollectionEmpresa', empresa);  
+    socket.emit('CollectionEmpresa', empresa);  // Enviar el número de vuelta al cliente
     listenChanges('empresa',io)
     //datos de sorteo
     const sorteos = await BuscarCollection('sorteos')
     socket.emit('CollectionSorteos', sorteos)
     listenChanges('sorteos',io)
+    //login
+    socket.on('authToken',async({token})=>{
+      Login(token,socket)
+    })
 
 
 
@@ -34,6 +40,6 @@ io.on('connection', async(socket) => {
 });
 
 // Iniciar el servidor en el puerto 3000
-server.listen(PORT, () => {
-  console.log('Servidor escuchando en el puerto: ',PORT);
+server.listen(5000, () => {
+  console.log('Servidor escuchando en el puerto 5000');
 });
