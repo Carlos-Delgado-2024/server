@@ -3,7 +3,7 @@ const { Server } = require('socket.io');
 const { BuscarCollection, listenChanges} = require('./functions/collection')
 const { Login } = require('./functions/login')
 const PORT = process.env.PORT || 5000
-const { setAdminRole } = require('./functions/newAdmin')
+//const { setAdminRole } = require('./functions/newAdmin')
 
 // Crear el servidor HTTP
 const server = http.createServer();
@@ -15,7 +15,7 @@ const io = new Server(server, {
     methods: ['GET', 'POST'],  // Métodos permitidos
   }
 });
-setAdminRole('Zsp8xwz7hpQ17SiSnHoKCv9s23p1')
+// setAdminRole('Zsp8xwz7hpQ17SiSnHoKCv9s23p1')
 
 // Manejar la conexión con Socket.IO
 io.on('connection', async(socket) => {
