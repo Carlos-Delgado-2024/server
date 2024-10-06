@@ -2,9 +2,10 @@ const http = require('http');
 const { Server } = require('socket.io');
 const { BuscarCollection, listenChanges} = require('./functions/collection')
 const { Login } = require('./functions/login')
-const { admin } = require('./config/firebase')
 const { setAdminRole } = require('./functions/newAdmin')
 const listAllUsers = require('./functions/listAllUsers')
+const { suspendUserAccount, enableUserAccount } = require('./functions/suspen-enable')
+const { setSaldoChaim } = require('./functions/saldo') 
 const PORT = process.env.PORT || 5000
 
 // Crear el servidor HTTP
@@ -34,6 +35,19 @@ io.on('connection', async(socket) => {
     })
     listAllUsers().then(users => {
       socket.emit('Users',users)
+    })
+    socket.on('suspen',async({id})=>{
+      const response = await suspendUserAccount(id)
+      //console.log('estos es response',response)
+      socket.emit('ResponsSupen',response)
+    })
+    socket.on('enable',async({id})=>{
+      const response = await enableUserAccount(id)
+      socket.emit('ResponseEnable',response)
+    })
+    socket.on('newSaldo',(id)=>{
+      const response = setSaldoChaim(id,0)
+      console.log('esto es response:',response)
     })
     
 
