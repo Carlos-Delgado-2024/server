@@ -49,6 +49,16 @@ io.on('connection', async(socket) => {
       const response = setSaldoChaim(id,0)
       console.log('esto es response:',response)
     })
+    socket.on('newSorteo',(data)=>{
+      NewSorteo(data).then(result => {
+        socket.emit('ResponseSorteo',result.message)
+      })
+    })
+    socket.on('eliminarSorteo',(id)=>{
+      eliminarSorteo(id).then(result => {
+        socket.emit('ResponseSorteo',result.message)
+      })
+    })
     
 
 
