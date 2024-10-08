@@ -23,13 +23,13 @@ const io = new Server(server, {
 io.on('connection', async(socket) => {
     console.log('Un usuario se ha conectado');
     //datos de empresa
-    const empresa = await BuscarCollection('empresa')
-    socket.emit('CollectionEmpresa', empresa);  // Enviar el número de vuelta al cliente
-    listenChanges('empresa',io)
+    // const empresa = await BuscarCollection('empresa')
+    // socket.emit('CollectionEmpresa', empresa);  // Enviar el número de vuelta al cliente
+    // listenChanges('empresa',io)
     //datos de sorteo
-    const sorteos = await BuscarCollection('sorteos')
-    socket.emit('CollectionSorteos', sorteos)
-    listenChanges('sorteos',io)
+    // const sorteos = await BuscarCollection('sorteos')
+    // socket.emit('CollectionSorteos', sorteos)
+    // listenChanges('sorteos',io)
     socket.on('authToken',async({token})=>{
       Login(token,socket)
     })
