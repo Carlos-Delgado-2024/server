@@ -5,7 +5,9 @@ const { Login } = require('./functions/login')
 const { setAdminRole } = require('./functions/newAdmin')
 const listAllUsers = require('./functions/listAllUsers')
 const { suspendUserAccount, enableUserAccount } = require('./functions/suspen-enable')
-const { setSaldoChaim } = require('./functions/saldo') 
+const { setSaldoChaim } = require('./functions/saldo')
+const { NewSorteo, eliminarSorteo } = require('./functions/sorteos')
+
 const PORT = process.env.PORT || 5000
 
 // Crear el servidor HTTP
