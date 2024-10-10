@@ -48,7 +48,9 @@ io.on('connection', async(socket) => {
       socket.emit('ResponseEnable',response)
     })
     socket.on('newSaldo',(id)=>{
-      const response = setSaldoChaim(id,0)
+      setSaldoChaim(id,0).then(result=>{
+        console.log('nuevo saldo',result)
+      })
       console.log('esto es response:',response)
     })
     socket.on('newSorteo',(data)=>{
