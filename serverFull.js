@@ -1,11 +1,11 @@
 const http = require('http');
 const { Server } = require('socket.io');
-const { BuscarCollection, listenChanges} = require('./functions/collection')
+//const { BuscarCollection, listenChanges} = require('./functions/collection')
 const { Login } = require('./functions/login')
 const { setAdminRole } = require('./functions/newAdmin')
 const listAllUsers = require('./functions/listAllUsers')
 const { suspendUserAccount, enableUserAccount } = require('./functions/suspen-enable')
-const { setSaldoChaim } = require('./functions/saldo')
+const { setSaldoChaim, newCargaNequi, eliminarRecargaNequi } = require('./functions/saldo') 
 const { NewSorteo, eliminarSorteo } = require('./functions/sorteos')
 
 const PORT = process.env.PORT || 5000
@@ -48,10 +48,9 @@ io.on('connection', async(socket) => {
       socket.emit('ResponseEnable',response)
     })
     socket.on('newSaldo',(id)=>{
-      setSaldoChaim(id,0).then(result=>{
-        console.log('nuevo saldo',result)
+      setSaldoChaim(id,0).then(response=>{
+        console.log(response)
       })
-      console.log('esto es response:',response)
     })
     socket.on('newSorteo',(data)=>{
       NewSorteo(data).then(result => {
@@ -63,6 +62,19 @@ io.on('connection', async(socket) => {
         socket.emit('ResponseSorteo',result.message)
       })
     })
+    socket.on('newCargaNequi',(data)=>{
+      newCargaNequi(data).then(response => {
+        socket.emit('ReponseCargaNequi', response)
+      })
+    })
+    socket.on('eliminarRecargaNequi',(data)=>{
+      eliminarRecargaNequi(data).then(response => {
+        socket.emit('ReponseCargaNequi', response)
+      })
+    })
+    //enableUserAccount('FWdTFhP1S8NbKisCboxdK3o1UEH2')
+
+    
     
 
 
