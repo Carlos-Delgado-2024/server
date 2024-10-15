@@ -33,7 +33,10 @@ io.on('connection', async(socket) => {
   socket.on('authToken', ({ token }) => {
     Login(token, socket, io);
   });  
-  //setAdminRole('Zsp8xwz7hpQ17SiSnHoKCv9s23p1')
+  socket.on('asigAdmin',(uid)=>{
+    setAdminRole(uid)
+
+  })
   listAllUsers(socket)
   // Manejar suspensión de cuenta
   socket.on('suspen', async ({ id }) => {
