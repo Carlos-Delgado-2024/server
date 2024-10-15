@@ -31,11 +31,12 @@ const eliminarSorteo = async (idSorteo) => {
     try {
         // Eliminar el documento de la colección 'sorteos' con el ID especificado
         await db.collection('sorteos').doc(idSorteo).delete();
-        console.log(`Sorteo con ID ${idSorteo} eliminado correctamente.`);
+        //console.log(`Sorteo con ID ${idSorteo} eliminado correctamente.`);
         return { success: true, message: 'Sorteo eliminado correctamente' };
     } catch (error) {
         console.error('Error al eliminar el sorteo:', error);
         return { success: false, message: error.message };
     }
 };
+
 module.exports = {NewSorteo, eliminarSorteo}
