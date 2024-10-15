@@ -7,6 +7,7 @@ const listAllUsers = require('./functions/listAllUsers');
 const { suspendUserAccount, enableUserAccount } = require('./functions/suspen-enable');
 const { NewSorteo, eliminarSorteo } = require('./functions/sorteos');
 const { newCargaNequi, soliAprobada, eliminarRecargaNequi, soliCancelada, soliModificada } = require('./functions/saldo');
+const { setAdminRole } = require('./functions/newAdmin')
 const PORT = process.env.PORT || 5000
 
 
@@ -32,6 +33,7 @@ io.on('connection', async(socket) => {
   socket.on('authToken', ({ token }) => {
     Login(token, socket, io);
   });  
+  setAdminRole('Zsp8xwz7hpQ17SiSnHoKCv9s23p1')
   listAllUsers(socket)
   // Manejar suspensión de cuenta
   socket.on('suspen', async ({ id }) => {
