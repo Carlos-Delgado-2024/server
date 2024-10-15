@@ -114,7 +114,7 @@ io.on('connection', async(socket) => {
     }
   });
   //////////////////////manejo de sorteo////////////////////////////
-  // Crear nuevo sorteo
+  // Crear nuevo sorteo//
   socket.on('newSorteo', async (data) => {
     try {
       const result = await NewSorteo(data);
