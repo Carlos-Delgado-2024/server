@@ -5,9 +5,10 @@ const { Server } = require('socket.io');
 const { Login } = require('./functions/login');
 const listAllUsers = require('./functions/listAllUsers');
 const { suspendUserAccount, enableUserAccount } = require('./functions/suspen-enable');
-const { NewSorteo, eliminarSorteo } = require('./functions/sorteos');
+const { NewSorteo, eliminarSorteo, comprarNumeros } = require('./functions/sorteos');
 const { newCargaNequi, soliAprobada, eliminarRecargaNequi, soliCancelada, soliModificada } = require('./functions/saldo');
 const { setAdminRole } = require('./functions/newAdmin')
+
 const PORT = process.env.PORT || 5000
 
 
@@ -32,7 +33,7 @@ io.on('connection', async(socket) => {
   // Manejar autenticación con Google
   socket.on('authToken', ({ token }) => {
     Login(token, socket, io);
-  });  
+  }); 
   socket.on('asigAdmin',(uid)=>{
     setAdminRole(uid)
 
@@ -105,8 +106,8 @@ io.on('connection', async(socket) => {
       const response = await soliAprobada(id);
       //const users = await listAllUsers();
       socket.emit('ResponseAprobarCuenta', response);
-      listAllUsers(socket)
-      io.emit('newSaldo')
+      const users = await listAllUsers(socket)
+      io.emit('newSaldo',{users,result})
     } catch (error) {
       console.error('Error al aprobar recarga Nequi:', error);
       socket.emit('ErrorAprobarCuenta', 'Error al aprobar recarga Nequi');
@@ -134,7 +135,20 @@ io.on('connection', async(socket) => {
       socket.emit('ErrorEliminarSorteo', 'Error al eliminar sorteo');
     }
   });
+  //comprar numeros
+  socket.on('confirmarPago',async(data)=>{
+    try {
+      const result = await comprarNumeros(data)
+      const users = await listAllUsers(socket)
+      io.emit('newSaldo',{users,result})
+    }catch (error) {
+      console.error('Error al comprar los numeros:', error);
+      socket.emit('ErrorComprarNumeros', 'Error al eliminar sorteo');
+    }
+    console.log(data)
+  })
 
+//////////////////////manejo de cierre////////////////////////////
     // Cuando el cliente se desconecta, limpia el intervalo
   socket.on('disconnect', () => {
     // clearInterval(intervalId);
