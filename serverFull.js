@@ -163,7 +163,8 @@ socket.on('iniciarSorteo', async (data) => {
   io.emit('fechaInicioSorteo',data.fecha)
   // Formato esperado: '2024-10-18T23:33'
   const fechaObjetivo = new Date(data.fecha);
-  
+  fechaObjetivo.setHours(fechaObjetivo.getHours() + 5);
+  console.log('fecha asignada del servidor',fechaObjetivo)
   if (isNaN(fechaObjetivo)) {
     console.log('Formato de fecha inválido');
     return;
