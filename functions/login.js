@@ -8,7 +8,6 @@ const Login = async (userData,socket) => {
         
         // Crear el nuevo usuario en Firestore usando el UID como identificación del documento
         const db = admin.firestore();
-        console.log('esto es data:',data)
         // Crear el documento en la colección 'users'
         await db.collection('users').doc(uid).set({
             data,
