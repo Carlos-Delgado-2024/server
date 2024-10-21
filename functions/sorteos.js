@@ -1,17 +1,17 @@
 const { admin } = require('../config/firebase')
-const { setSaldoChaim } = require('./saldo')
 const db = admin.firestore()
 
 const NewSorteo = async(sorteoData)=>{
     //console.log(sorteoData)
     const arrayPuesto = []
-    for(let i = 1; i<=sorteoData.formData.puestos; i++){
-        const numero = i.toString().padStart(sorteoData.formData.puestos.toString().length,'0')
+    for(let i = 0; i<=sorteoData.formData.puestos-1; i++){
+        const numero = i.toString().padStart(sorteoData.formData.puestos.toString().length-1,'0')
         arrayPuesto.push({[numero]:''})
     }
     try{
         // Guarda el documento con un ID automático
         const docRef = await db.collection('sorteos').add({
+            estado:'Participando',
             premio: sorteoData.formData.premio,
             valor: sorteoData.formData.valor,
             puestos: sorteoData.formData.puestos,
@@ -41,55 +41,96 @@ const eliminarSorteo = async (idSorteo) => {
 };
 // Función para comprar números
 const comprarNumeros = async (data) => {
-    try {
-      const docRef = db.collection('sorteos').doc(data.id);
-      const doc = await docRef.get();
-  
-      if (doc.exists) {
-        const datadoc = doc.data();
-        const arrayPuestos = datadoc['arryPuestos'];
-        
-        // Actualizar el array de puestos asignando los seleccionados al uid del usuario
-        const newArrayPuesto = arrayPuestos.map(obj => {
-          const clave = Object.keys(obj)[0];
-          if (data.seleccionados.includes(clave)) {
-            return { [clave]: data.uid };
-          }
-          return obj;
-        });
-        
-        // Actualizar los puestos en la base de datos
-        await db.collection('sorteos').doc(data.id).update({
-          'arryPuestos': newArrayPuesto
-        });
-        
-        // Obtener el usuario de Firebase Authentication
-        const userRecord = await admin.auth().getUser(data.uid);
-        
-        // Calcular el pago
-        const pago = datadoc['valor'] * data.seleccionados.length;
-        const saldoActual = userRecord.customClaims.saldo || 0;
-  
-        // Validar si el usuario tiene saldo suficiente
-        if (saldoActual < pago) {
-          return { success: false, message: 'Saldo insuficiente para completar la compra' };
+  try {
+    const docRef = db.collection('sorteos').doc(data.id);
+    const doc = await docRef.get();
+
+    if (doc.exists) {
+      const datadoc = doc.data();
+      const arrayPuestos = datadoc['arryPuestos'];
+
+      // Actualizar el array de puestos asignando los seleccionados al uid del usuario
+      const newArrayPuesto = arrayPuestos.map(obj => {
+        const clave = Object.keys(obj)[0];
+        if (data.seleccionados.includes(clave)) {
+          return { [clave]: data.uid };
         }
-  
-        // Actualizar el saldo del usuario
-        const newSaldo = saldoActual - pago;
-        await setSaldoChaim(data.uid, newSaldo);
-  
-        return { success: true, message: 'Números asignados correctamente', newSaldo: newSaldo };
+        return obj;
+      });
+
+      // Actualizar los puestos en la base de datos
+      await db.collection('sorteos').doc(data.id).update({
+        'arryPuestos': newArrayPuesto
+      });
+
+      // Obtener el usuario de Firebase Authentication
+      const userRecord = await db.collection('users').doc(data.uid);
+      const docuser = await userRecord.get();
+      const datadocuser = docuser.data();
+
+      // Calcular el pago
+      const pago = datadoc['valor'] * data.seleccionados.length;
+      const saldoActual = datadocuser.saldo;
+
+      // Validar si el usuario tiene saldo suficiente
+      if (saldoActual < pago) {
+        return { success: false, message: 'Saldo insuficiente para completar la compra' };
       }
-  
-      return { success: false, message: 'El sorteo no existe' };
-    } catch (error) {
-      console.error('Error al comprar números:', error);
-      return { success: false, message: 'Ocurrió un error al procesar la compra', error };
+
+      // Actualizar el saldo del usuario
+      const newSaldo = saldoActual - pago;
+      await db.collection('users').doc(data.uid).update({
+        saldo: newSaldo
+      });
+
+      // Comprobar si todos los números ya están ocupados
+      const puestosDisponibles = newArrayPuesto.filter(obj => Object.values(obj)[0] === '').length;
+      if (puestosDisponibles === 0) {
+        // Si ya no hay puestos disponibles, actualizar el estado del sorteo a "completado"
+        await db.collection('sorteos').doc(data.id).update({
+          estado: 'Completado',
+          fecha: 'Sin Asignar'
+        });
+      }
+
+      return { success: true, message: 'Números asignados correctamente', newSaldo: newSaldo, uid: data.uid };
     }
-  };
+
+    return { success: false, message: 'El sorteo no existe' };
+  } catch (error) {
+    console.error('Error al comprar números:', error);
+    return { success: false, message: 'Ocurrió un error al procesar la compra', error };
+  }
+};
+  const AsignarFecha = async(data)=>{
+    await db.collection('sorteos').doc(data.id).update({
+      fecha: data.fecha
+    })
+
+  }
+  const IniciarSorteo = async(id)=>{
+    console.log('entro')
+    const docRef = db.collection('sorteos').doc(id);
+    const doc = await docRef.get();
+    const datadoc = doc.data();
+    const NumeroGanador = await Math.floor(Math.random() * datadoc.puestos).toString().padStart(datadoc.puestos.toString().length-1,'0')
+    console.log(NumeroGanador)
+    const uidGanador = await datadoc.arryPuestos[Number(NumeroGanador)][NumeroGanador]
+    console.log(uidGanador)
+    const userRef = db.collection('users').doc(uidGanador)
+    const userdoc= await userRef.get()
+    const userdata = userdoc.data()
+    console.log(userdata.nombre)
+    await db.collection('sorteos').doc(id).update({
+      estado:'Realizado',
+      ganador:NumeroGanador,
+      uidGanador,
+      nombreGanador:userdata.nombre
+    })
+    return NumeroGanador
+  }
   
     
 
 
-module.exports = {NewSorteo, eliminarSorteo, comprarNumeros}
+module.exports = {NewSorteo, eliminarSorteo, comprarNumeros, IniciarSorteo, AsignarFecha}

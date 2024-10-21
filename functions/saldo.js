@@ -1,27 +1,39 @@
 const { admin } = require('../config/firebase')
 const db = admin.firestore()
 
-const setSaldoChaim = async (uid, saldo)=>{
-    try{
-        await admin.auth().setCustomUserClaims(uid, { saldo: saldo });
-        return { success: true, message: 'Saldo asignado correctamente', saldo };
-    }catch (error) {
+const { getFirestore, doc, updateDoc } = require('firebase-admin/firestore');
+// const db = getFirestore();  // Instancia de Firestore
+
+const setSaldoChaim = async (uid, saldo) => {
+    try {
+        // Referencia al documento del usuario en la colección 'users'
+        const userDocRef = db.collection('users').doc(uid)
+        const doc = await userDocRef.get()
+        const data = doc.data()
+        const newSaldo = Number(data.saldo) + Number(saldo)
+        await db.collection('users').doc(uid).update({
+            saldo:newSaldo
+        })
+        
+        return { success: true, message: 'Saldo asignado correctamente', newSaldo };
+    } catch (error) {
         console.error('Error al asignar el saldo:', error);
         return { success: false, message: error.message };
     }
-}
+};
+
 
 const newCargaNequi = async(data)=>{
     try{
         const docRef = await db.collection('CargaNequi').add({
-            uid: data.formData.id,
+            uid: data.formData.uid,
             saldoActual: data.formData.saldo,
             montoCarga: data.formData.monto,
             fecha: data.now,
             comprobante: data.fileUrl,
             state: 'Pendiente'
         })
-        return { success: true , message: 'solicitud de recarga de cuenta, enviada existosamente', uid:data.formData.id}
+        return { success: true , message: 'solicitud de recarga de cuenta, enviada existosamente', uid:data.formData.uid}
     }catch (error) {
         //console.error('Error al guardar el sorteo:', error);
         return { success: false, message: error.message };
@@ -68,9 +80,9 @@ const soliAprobada = async(id)=>{
         await db.collection('CargaNequi').doc(id).update({
             state:'Aprobada'
         })
-        const newSaldo = Number(data.montoCarga) + Number(user.customClaims.saldo)
-        const x = await setSaldoChaim(data.uid, newSaldo).then(response=>{
-            return response
+        
+        const x = await setSaldoChaim(data.uid, data.montoCarga).then(response=>{
+            return {...response,uid:data.uid}
         })
         return x
 

@@ -1,35 +1,33 @@
-const { admin } = require('../config/firebase');
-const { setSaldoChaim } = require('./saldo');
-const listAllUsers = require('./listAllUsers');
+const { admin } = require('../config/firebase');  // Asegúrate de que admin esté configurado correctamente
+const { setSaldoChaim } = require('./saldo');    // Asumiendo que tienes otras funcionalidades
+const listAllUsers = require('./listAllUsers');  // Asumiendo que tienes otras funcionalidades
 
-
-const Login = async (token, socket, io) => {
+const Login = async (userData,socket) => {
     try {
-        // Verificar el token
-        const decodedToken = await admin.auth().verifyIdToken(token);
+        const { uid, nombre, cc, correo, tel, nequi, typeUser, saldo, data } = userData;
         
-        // Si el usuario es nuevo y no tiene saldo, asignar saldo 0
-        if (!decodedToken.saldo) {
-            await setSaldoChaim(decodedToken.uid, 0); // Esperar a que se asigne el saldo
-            //console.log(decodedToken.saldo)
-            io.emit('newUser')
-            const users = await listAllUsers(socket)
-            io.emit('dataUserUodate',users)
+        // Crear el nuevo usuario en Firestore usando el UID como identificación del documento
+        const db = admin.firestore();
+        console.log('esto es data:',data)
+        // Crear el documento en la colección 'users'
+        await db.collection('users').doc(uid).set({
+            data,
+            nombre: nombre,  
+            cc: cc,          
+            correo: correo,  
+            tel: tel,        
+            nequi: nequi,    
+            typeUser: typeUser,  
+            saldo: saldo      
+        });
 
-        } else {
-            console.log('Saldo del usuario:', decodedToken.saldo);
-        }
+        console.log(`Usuario con UID: ${uid} creado exitosamente en la base de datos.`);
 
-        // Verificar si el usuario tiene la custom claim de admin
-        if (decodedToken.admin === true) {
-            console.log('El usuario es un administrador');
-            socket.emit('authResponse', { success: true, isAdmin: true });
-        } else {
-            // console.log('El usuario NO es un administrador');
-            socket.emit('authResponse', { success: true, isAdmin: false });
-        }
+        // Emitir una respuesta de éxito al cliente (opcional)
+        socket.emit('authResponse', { success: true, message: 'Usuario registrado correctamente' });
+
     } catch (error) {
-        console.error('Error al verificar el token:', error);
+        console.error('Error al crear el usuario en Firestore:', error);
         socket.emit('authResponse', { success: false, message: error.message });
     }
 };

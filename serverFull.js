@@ -5,10 +5,10 @@ const { Server } = require('socket.io');
 const { Login } = require('./functions/login');
 const listAllUsers = require('./functions/listAllUsers');
 const { suspendUserAccount, enableUserAccount } = require('./functions/suspen-enable');
-const { NewSorteo, eliminarSorteo, comprarNumeros } = require('./functions/sorteos');
+const { NewSorteo, eliminarSorteo, comprarNumeros, IniciarSorteo, AsignarFecha } = require('./functions/sorteos');
 const { newCargaNequi, soliAprobada, eliminarRecargaNequi, soliCancelada, soliModificada } = require('./functions/saldo');
 const { setAdminRole } = require('./functions/newAdmin')
-
+const cron = require('node-cron');
 const PORT = process.env.PORT || 5000
 
 
@@ -29,14 +29,21 @@ io.on('connection', async(socket) => {
   count += 1
   console.log('Un cliente se ha conectado');
   console.log('clientes conectados', count);
+
+  //////////////////////solo para prueba////////////////////////////
+  // const idSorteo ='2r9Gq2yDM5AAHYr6lbWc'
+  // IniciarSorteo(idSorteo)
+  
   //////////////////////manejo de cuenta////////////////////////////
   // Manejar autenticación con Google
-  socket.on('authToken', ({ token }) => {
-    Login(token, socket, io);
-  }); 
-  socket.on('asigAdmin',(uid)=>{
-    setAdminRole(uid)
-
+  // socket.on('authToken', ({ token }) => {
+  //   Login(token, socket, io);
+  // }); 
+  // socket.on('asigAdmin',(uid)=>{
+  //   setAdminRole(uid)
+  // })
+  socket.on('newUser',(data)=>{
+    Login(data, socket)
   })
   listAllUsers(socket)
   // Manejar suspensión de cuenta
@@ -63,7 +70,7 @@ io.on('connection', async(socket) => {
   socket.on('newCargaCuenta', async (data) => {
     try {
       const response = await newCargaNequi(data);
-      socket.emit('ReponseCargaNequi', response);
+      socket.emit('ReponseCargaCuenta', response);
       io.emit('NewRecargaCuenta')
     } catch (error) {
       console.error('Error en nueva carga Nequi:', error);
@@ -74,7 +81,7 @@ io.on('connection', async(socket) => {
   socket.on('eliminarRecargaNequi', async (data) => {
     try {
       const response = await eliminarRecargaNequi(data);
-      socket.emit('ReponseCargaNequi', response);
+      socket.emit('ReponseCargaCuenta', response);
     } catch (error) {
       console.error('Error al eliminar recarga Nequi:', error);
       socket.emit('ErrorEliminarRecargaNequi', 'Error al eliminar recarga Nequi');
@@ -105,16 +112,16 @@ io.on('connection', async(socket) => {
     try {
       const response = await soliAprobada(id);
       //const users = await listAllUsers();
-      socket.emit('ResponseAprobarCuenta', response);
-      const users = await listAllUsers(socket)
-      io.emit('newSaldo',{users,result})
+      io.emit('ResponseAprobarCuenta', response);
+      // const users = await listAllUsers(socket)
+      // io.emit('newSaldo',{users,result})
     } catch (error) {
       console.error('Error al aprobar recarga Nequi:', error);
       socket.emit('ErrorAprobarCuenta', 'Error al aprobar recarga Nequi');
     }
   });
   //////////////////////manejo de sorteo////////////////////////////
-  // Crear nuevo sorteo//
+  // Crear nuevo sorteo
   socket.on('newSorteo', async (data) => {
     try {
       const result = await NewSorteo(data);
@@ -137,16 +144,52 @@ io.on('connection', async(socket) => {
   });
   //comprar numeros
   socket.on('confirmarPago',async(data)=>{
+
     try {
       const result = await comprarNumeros(data)
-      const users = await listAllUsers(socket)
-      io.emit('newSaldo',{users,result})
+      socket.emit('responsConfirmarPago',result)
+      // const users = await listAllUsers(socket)
+      // io.emit('newSaldoCarga',{users,result})
     }catch (error) {
       console.error('Error al comprar los numeros:', error);
       socket.emit('ErrorComprarNumeros', 'Error al eliminar sorteo');
     }
-    console.log(data)
   })
+  // Socket listener para 'iniciarSorteo'
+socket.on('iniciarSorteo', async (data) => {
+  console.log(`Fecha recibida para iniciar el sorteo: ${data.fecha}`);
+  AsignarFecha(data)
+  io.emit('fechaInicioSorteo',data.fecha)
+  // Formato esperado: '2024-10-18T23:33'
+  const fechaObjetivo = new Date(data.fecha);
+  
+  if (isNaN(fechaObjetivo)) {
+    console.log('Formato de fecha inválido');
+    return;
+  }
+
+  const minutos = fechaObjetivo.getMinutes();
+  const horas = fechaObjetivo.getHours();
+  const dia = fechaObjetivo.getDate();
+  const mes = fechaObjetivo.getMonth() + 1; // Los meses en JS van de 0 a 11
+  
+  console.log(`Programando sorteo para: ${fechaObjetivo}`);
+
+  // Programar el cron para la fecha objetivo
+  const tarea = cron.schedule(`${minutos} ${horas} ${dia} ${mes} *`, async () => {
+    console.log('¡Ejecutando sorteo!');
+
+    try {
+      const ganador = await IniciarSorteo(data.id); // Ejecutar la función del sorteo
+      io.emit('InicioSorteo',ganador)
+      console.log(`Ganador del sorteo con ID ${data.id}: ${ganador}`);
+    } catch (error) {
+      console.error('Error ejecutando el sorteo:', error);
+    }
+
+    tarea.stop(); // Detener la tarea cron después de ejecutar
+  });
+});
 
 //////////////////////manejo de cierre////////////////////////////
     // Cuando el cliente se desconecta, limpia el intervalo
