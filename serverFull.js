@@ -33,7 +33,8 @@ io.on('connection', async(socket) => {
   //////////////////////solo para prueba////////////////////////////
   // const idSorteo ='2r9Gq2yDM5AAHYr6lbWc'
   // IniciarSorteo(idSorteo)
-  
+  const ahora = new Date()
+  console.log(ahora)
   //////////////////////manejo de cuenta////////////////////////////
   // Manejar autenticación con Google
   // socket.on('authToken', ({ token }) => {
