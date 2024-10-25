@@ -17,7 +17,8 @@ const Login = async (userData,socket) => {
             tel: tel,        
             nequi: nequi,    
             typeUser: typeUser,  
-            saldo: saldo      
+            saldo: saldo,               
+            init: true  
         });
 
         console.log(`Usuario con UID: ${uid} creado exitosamente en la base de datos.`);
@@ -28,7 +29,11 @@ const Login = async (userData,socket) => {
     } catch (error) {
         console.error('Error al crear el usuario en Firestore:', error);
         socket.emit('authResponse', { success: false, message: error.message });
-    }
+    }  
 };
-
-module.exports = { Login };
+const InitYa = async(uid)=>{
+    await db.collection('users').doc(uid).update({
+        init:false
+    })
+}
+module.exports = { Login, InitYa };

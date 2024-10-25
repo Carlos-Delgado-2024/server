@@ -2,7 +2,7 @@
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
-const { Login } = require('./functions/login');
+const { Login, InitYa } = require('./functions/login');
 const listAllUsers = require('./functions/listAllUsers');
 const { suspendUserAccount, enableUserAccount } = require('./functions/suspen-enable');
 const { NewSorteo, eliminarSorteo, comprarNumeros, IniciarSorteo, AsignarFecha } = require('./functions/sorteos');
@@ -29,24 +29,16 @@ io.on('connection', async(socket) => {
   count += 1
   console.log('Un cliente se ha conectado');
   console.log('clientes conectados', count);
-
-  //////////////////////solo para prueba////////////////////////////
-  // const idSorteo ='2r9Gq2yDM5AAHYr6lbWc'
-  // IniciarSorteo(idSorteo)
   const ahora = new Date()
   console.log(ahora)
   //////////////////////manejo de cuenta////////////////////////////
-  // Manejar autenticación con Google
-  // socket.on('authToken', ({ token }) => {
-  //   Login(token, socket, io);
-  // }); 
-  // socket.on('asigAdmin',(uid)=>{
-  //   setAdminRole(uid)
-  // })
   socket.on('newUser',(data)=>{
     Login(data, socket)
   })
-  listAllUsers(socket)
+  socket.on('initYa',(uid)=>{
+    InitYa(uid)
+  })
+  // listAllUsers(socket)
   // Manejar suspensión de cuenta
   socket.on('suspen', async ({ id }) => {
     try {
