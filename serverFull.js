@@ -36,6 +36,7 @@ io.on('connection', async(socket) => {
     Login(data, socket)
   })
   socket.on('initYa',(uid)=>{
+    console.log('se desplego init')
     InitYa(uid)
   })
   // listAllUsers(socket)
