@@ -14,7 +14,7 @@ const setSaldoChaim = async (uid, saldo) => {
         if(data.typeUser === 'basic'){
             montoCarga = montoCarga * 2
         }
-        const newSaldo = Number(data.saldo) + Number(saldo)
+        const newSaldo = Number(data.saldo) + Number(montoCarga)
         await db.collection('users').doc(uid).update({
             saldo:newSaldo,
             typeUser:'activo'

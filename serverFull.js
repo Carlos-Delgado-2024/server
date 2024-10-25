@@ -29,8 +29,8 @@ io.on('connection', async(socket) => {
   count += 1
   console.log('Un cliente se ha conectado');
   console.log('clientes conectados', count);
-  const ahora = new Date()
-  console.log(ahora)
+  // const ahora = new Date()
+  // console.log(ahora)
   //////////////////////manejo de cuenta////////////////////////////
   socket.on('newUser',(data)=>{
     Login(data, socket)
