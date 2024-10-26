@@ -1,13 +1,12 @@
 const { admin } = require('../config/firebase');  // Asegúrate de que admin esté configurado correctamente
-const { setSaldoChaim } = require('./saldo');    // Asumiendo que tienes otras funcionalidades
-const listAllUsers = require('./listAllUsers');  // Asumiendo que tienes otras funcionalidades
+
+const db = admin.firestore();
 
 const Login = async (userData,socket) => {
     try {
         const { uid, nombre, cc, correo, tel, nequi, typeUser, saldo, data } = userData;
         
         // Crear el nuevo usuario en Firestore usando el UID como identificación del documento
-        const db = admin.firestore();
         // Crear el documento en la colección 'users'
         await db.collection('users').doc(uid).set({
             data,
