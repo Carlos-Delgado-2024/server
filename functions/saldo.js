@@ -11,13 +11,16 @@ const setSaldoChaim = async (uid, saldo) => {
         const doc = await userDocRef.get()
         const data = doc.data()
         let montoCarga = saldo
+        let init = false
         if(data.typeUser === 'basic'){
             montoCarga = montoCarga * 2
+            init=true
         }
         const newSaldo = Number(data.saldo) + Number(montoCarga)
         await db.collection('users').doc(uid).update({
             saldo:newSaldo,
-            typeUser:'activo'
+            typeUser:'activo',
+            init
         })
         
         return { success: true, message: 'Saldo asignado correctamente', newSaldo };
