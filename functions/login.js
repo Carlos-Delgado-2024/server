@@ -3,6 +3,7 @@ const { admin } = require('../config/firebase');  // Asegúrate de que admin est
 const db = admin.firestore();
 
 const Login = async (userData,socket) => {
+    console.log(userData)
     try {
         const { uid, nombre, cc, correo, tel, nequi, typeUser, saldo, data, tokenMessenger  } = userData;
         
