@@ -16,6 +16,7 @@ const NewSorteo = async(sorteoData)=>{
             valor: sorteoData.formData.valor,
             puestos: sorteoData.formData.puestos,
             urlImg: sorteoData.fileUrl,
+            typeLot:sorteoData.formData.typeLot,
             // Si 'puestos' es una estructura más compleja (e.g., un array), lo puedes incluir aquí
             arryPuestos: arrayPuesto   // Ejemplo: Array de puestos
         });
