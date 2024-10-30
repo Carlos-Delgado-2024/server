@@ -2,7 +2,7 @@
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
-const { Login, InitYa } = require('./functions/login');
+const { Login, InitYa, notificacion } = require('./functions/login');
 const listAllUsers = require('./functions/listAllUsers');
 const { suspendUserAccount, enableUserAccount } = require('./functions/suspen-enable');
 const { NewSorteo, eliminarSorteo, comprarNumeros, IniciarSorteo, AsignarFecha } = require('./functions/sorteos');
@@ -38,6 +38,9 @@ io.on('connection', async(socket) => {
   socket.on('initYa',(uid)=>{
     console.log('se desplego init')
     InitYa(uid)
+  })
+  socket.on('notificacionAdd',(data)=>{
+    notificacion(data.uid, data.tokenMessenger)
   })
   // listAllUsers(socket)
   // Manejar suspensión de cuenta
