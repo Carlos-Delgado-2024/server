@@ -40,6 +40,7 @@ io.on('connection', async(socket) => {
     InitYa(uid)
   })
   socket.on('notificacionAdd',(data)=>{
+    console.log(data)
     notificacion(data.uid, data.tokenMessenger)
   })
   // listAllUsers(socket)
