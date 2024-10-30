@@ -41,7 +41,7 @@ io.on('connection', async(socket) => {
   })
   socket.on('notificacionAdd',(data)=>{
     console.log(data)
-    notificacion(data.uid, data.tokenMessenger)
+    notificacion(data.uid, data.tokenMesseger)
   })
   // listAllUsers(socket)
   // Manejar suspensión de cuenta
