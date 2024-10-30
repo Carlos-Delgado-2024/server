@@ -10,16 +10,22 @@ const NewSorteo = async(sorteoData)=>{
     }
     try{
         // Guarda el documento con un ID automático
-        const docRef = await db.collection('sorteos').add({
-            estado:'Participando',
-            premio: sorteoData.formData.premio,
-            valor: sorteoData.formData.valor,
-            puestos: sorteoData.formData.puestos,
-            urlImg: sorteoData.fileUrl,
-            typeLot:sorteoData.formData.typeLot,
-            // Si 'puestos' es una estructura más compleja (e.g., un array), lo puedes incluir aquí
-            arryPuestos: arrayPuesto   // Ejemplo: Array de puestos
-        });
+        const docData = {
+          estado: 'Participando',
+          premio: sorteoData.formData.premio,
+          valor: sorteoData.formData.valor,
+          puestos: sorteoData.formData.puestos,
+          urlImg: sorteoData.fileUrl,
+          typeLot: sorteoData.formData.typeLot,
+          arryPuestos: arrayPuesto // Ejemplo: Array de puestos
+      };
+      
+      // Verificamos si el tipo de sorteo es 'Express' para añadir 'premioBase'
+      if (sorteoData.formData.typeLot === 'Express') {
+          docData.premioBase = sorteoData.formData.premioBase;
+      }
+      
+      const docRef = await db.collection('sorteos').add(docData);
 
         //console.log('Sorteo guardado con ID:', docRef.id);
         return { success: true, message: 'Sorteo guardado correctamente', id: docRef.id };
