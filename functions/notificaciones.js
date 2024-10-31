@@ -21,25 +21,28 @@ const ObtenerTokens = async(typeUser)=>{
     }
 }
 
-const sendNotificationToGroup = async(typeUser)=>{
-    const tokens = await ObtenerTokens(typeUser)
-    console.log(tokens)
-    const promises = tokens.map((token)=>{
-        const message = {
-            notification:{
-                title: 'title',
-                body: 'body'
-            },
-            token: token
+const sendNotificationToGroup = async(data)=>{
+    data.groups.map(async(grp)=>{
+        const tokens = await ObtenerTokens(grp)
+        console.log(tokens.length)
+        const promises = tokens.map((token)=>{
+            const message = {
+                notification:{
+                    title: 'title',
+                    body: 'body'
+                },
+                token: token
+            }
+            return admin.messaging().send(message)
+        })
+        try {
+            const responses = await Promise.all(promises); // Espera a que todas las promesas se resuelvan
+            console.log('Successfully sent messages');
+        } catch (error) {
+            console.log('Error sending message:', error);
         }
-        return admin.messaging().send(message)
     })
-    try {
-        const responses = await Promise.all(promises); // Espera a que todas las promesas se resuelvan
-        console.log('Successfully sent messages');
-    } catch (error) {
-        console.log('Error sending message:', error);
-    }
+    
 
 
 

@@ -41,8 +41,8 @@ io.on('connection', async(socket) => {
     console.log('se desplego init')
     InitYa(uid)
   })
-  socket.on('notificacionSend',(typeUser)=>{
-    sendNotificationToGroup(typeUser)
+  socket.on('notificacionSend',(data)=>{
+    sendNotificationToGroup(data)
   })
   socket.on('notificacionAdd',(data)=>{
     notificacion(data.uid, data.tokenMesseger)
