@@ -23,6 +23,7 @@ const ObtenerTokens = async(typeUser)=>{
 
 const sendNotificationToGroup = async(typeUser)=>{
     const tokens = await ObtenerTokens(typeUser)
+    console.log(tokens)
     const promises = tokens.map((token)=>{
         const message = {
             Notification:{
