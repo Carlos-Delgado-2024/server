@@ -26,7 +26,7 @@ const sendNotificationToGroup = async(typeUser)=>{
     console.log(tokens)
     const promises = tokens.map((token)=>{
         const message = {
-            Notification:{
+            notification:{
                 title: 'title',
                 body: 'body'
             },
