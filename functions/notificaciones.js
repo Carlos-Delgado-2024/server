@@ -36,7 +36,7 @@ const sendNotificationToGroup = async(typeUser)=>{
     })
     try {
         const responses = await Promise.all(promises); // Espera a que todas las promesas se resuelvan
-        console.log('Successfully sent messages:', responses);
+        console.log('Successfully sent messages');
     } catch (error) {
         console.log('Error sending message:', error);
     }

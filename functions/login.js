@@ -37,9 +37,9 @@ const InitYa = async(uid)=>{
         init:false
     })
 }
-const notificacion = async(uid,tokenMessenger)=>{
+const notificacion = async(uid,tokenMesseger)=>{
     await db.collection('users').doc(uid).update({
-        tokenMessenger:tokenMessenger
+        tokenMesseger:tokenMesseger
     })
 }
 module.exports = { Login, InitYa, notificacion };
