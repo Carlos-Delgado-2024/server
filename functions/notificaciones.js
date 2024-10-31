@@ -37,8 +37,11 @@ const sendNotificationToGroup = async (data) => {
                     ...(image && { image }), // Incluir la imagen solo si existe
                 },
                 token: token,
-                ...(url && { data: { url } }), // Incluir la URL solo si existe
+                data: {
+                    url: url || 'https://megaloto-vfinal.web.app/', // Usar la URL proporcionada o la URL predeterminada
+                }
             };
+
             return admin.messaging().send(message);
         });
 
