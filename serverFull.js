@@ -45,6 +45,7 @@ io.on('connection', async(socket) => {
     sendNotificationToGroup(data)
   })
   socket.on('notificacionAdd',(data)=>{
+    console.log('se recivio notificacionAdd')
     notificacion(data.uid, data.tokenMesseger)
   })
   // listAllUsers(socket)
