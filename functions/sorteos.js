@@ -54,6 +54,7 @@ const comprarNumeros = async (data) => {
 
     if (doc.exists) {
       const datadoc = doc.data();
+      console.log(datadoc)
       const arrayPuestos = datadoc['arryPuestos'];
 
       // Actualizar el array de puestos asignando los seleccionados al uid del usuario
