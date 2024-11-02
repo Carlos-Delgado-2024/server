@@ -54,7 +54,7 @@ const comprarNumeros = async (data) => {
 
     if (doc.exists) {
       const datadoc = doc.data();
-      console.log(datadoc)
+      // console.log(datadoc)
       const arrayPuestos = datadoc['arryPuestos'];
 
       // Actualizar el array de puestos asignando los seleccionados al uid del usuario
@@ -65,12 +65,13 @@ const comprarNumeros = async (data) => {
         }
         return obj;
       });
-      if(datadoc.typeLot==='Express'){
-        const acumulado = datadoc.premioBase + (datadoc.valor*0.7)
-        await db.collection('sorteos').doc(data.id).update({
-          'premioBase':acumulado
-        })
-      }
+      console.log(datadoc.typeLot)
+      // if(datadoc.typeLot==='Express'){
+      //   const acumulado = datadoc.premioBase + (datadoc.valor*0.7)
+      //   await db.collection('sorteos').doc(data.id).update({
+      //     'premioBase':acumulado
+      //   })
+      // }
       // Actualizar los puestos en la base de datos
       await db.collection('sorteos').doc(data.id).update({
         'arryPuestos': newArrayPuesto
