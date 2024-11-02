@@ -67,7 +67,7 @@ const comprarNumeros = async (data) => {
       });
       // console.log(datadoc.typeLot)
       if(datadoc.typeLot==='Express'){
-        const acumulado = (datadoc.premioBase + (datadoc.valor*0.7)) * data.seleccionados.length
+        const acumulado = (datadoc.premioBase + (datadoc.valor*0.7) * data.seleccionados.length)
         await db.collection('sorteos').doc(data.id).update({
           'premioBase':acumulado
         })
