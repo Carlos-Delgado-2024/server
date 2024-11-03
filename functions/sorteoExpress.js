@@ -34,8 +34,8 @@ const initExpress = async() => {
             const data = doc.data()
             // console.log('esto es data', data)
             if (data.typeLot === 'Express'){
-                const numeroGanador = Math.floor(Math.random() * 100)
-                const ganador = data.arryPuestos[numeroGanador]
+                const numeroGanador = Math.floor(Math.random() * data.puestos).toString().padStart(data.puestos.toString().length-1,'0')
+                const ganador = data.arryPuestos[Number(numeroGanador)][numeroGanador]
                 console.log(ganador)
 
                 // await db.collection('sorteos').doc(doc.id).update({
