@@ -56,6 +56,17 @@ const initExpress = async() => {
                     'ganador':numeroGanador,
                     'userGanador':userGanador,
                 })
+                if(userGanador){
+                    const userRef = db.collection('users').doc(userGanador)
+                    const userDoc = await userRef.get()
+                    const userData = userDoc.data()
+                    const newSaldo = data.premioBase + userData.saldo
+
+                    await db.collection('users').doc(userGanador).update({
+                        'saldo':newSaldo
+                    })
+                }
+
                 
                 
 
