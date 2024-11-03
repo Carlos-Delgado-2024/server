@@ -35,7 +35,8 @@ io.on('connection', async(socket) => {
   // const ahora = new Date()
   // console.log(ahora)
 ///sorteo express/////
-  cron.schedule('5 * * * *', () => {
+  cron.schedule('10 * * * *', () => {
+    console.log('se inicio reset')
     resetExpress()
   })
 
