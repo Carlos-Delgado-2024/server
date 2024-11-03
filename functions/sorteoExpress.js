@@ -1,4 +1,5 @@
 const { admin } = require('../config/firebase')
+const { NewSorteo } = require('./sorteos')
 const db = admin.firestore()
 
 const resetExpress = async()=>{
@@ -8,6 +9,21 @@ const resetExpress = async()=>{
             const data = doc.data()
             // console.log('esto es data', data)
             if (data.typeLot === 'Express'){
+                if(data.userGanador){
+                    await db.collection('sorteos').doc(doc.id).update({
+                        'estado':'archivado'
+                    })
+                    const formData = {
+                        premio:'acumulado',
+                        valor: 1000,
+                        puestos: 100,
+                        urlImg: data.urlImg,
+                        typeLot: 'Express',
+                        premioBase: 10000
+                    }
+                    NewSorteo({formData})
+
+                }
                 const ArrayPuestos = []
                 for(let i = 0; i <= data.puestos-1;i++){
                     const numero = i.toString().padStart(data.puestos.toString().length-1,'0')
@@ -35,13 +51,13 @@ const initExpress = async() => {
             // console.log('esto es data', data)
             if (data.typeLot === 'Express'){
                 const numeroGanador = Math.floor(Math.random() * data.puestos).toString().padStart(data.puestos.toString().length-1,'0')
-                const ganador = data.arryPuestos[Number(numeroGanador)][numeroGanador]
-                console.log(ganador)
-
-                // await db.collection('sorteos').doc(doc.id).update({
-                //     'arryPuestos': ArrayPuestos,
-                //     'ganador':''
-                // })
+                const userGanador = data.arryPuestos[Number(numeroGanador)][numeroGanador]
+                await db.collection('sorteos').doc(doc.id).update({
+                    'ganador':numeroGanador,
+                    'userGanador':userGanador,
+                })
+                
+                
 
             }
         })
