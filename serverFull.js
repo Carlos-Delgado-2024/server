@@ -39,7 +39,7 @@ io.on('connection', async(socket) => {
     console.log('se inicio reset')
     resetExpress()
   })
-  cron.schedule('9 * * * *', () => {
+  cron.schedule('20 * * * *', () => {
     console.log('se inicio el sorteo')
     initExpress()
   })
