@@ -9,7 +9,7 @@ const { NewSorteo, eliminarSorteo, comprarNumeros, IniciarSorteo, AsignarFecha }
 const { newCargaNequi, soliAprobada, eliminarRecargaNequi, soliCancelada, soliModificada } = require('./functions/saldo');
 const { setAdminRole } = require('./functions/newAdmin')
 const { sendNotificationToGroup } = require('./functions/notificaciones')
-const { resetExpress } = require('./functions/sorteoExpress')
+const { resetExpress, initExpress } = require('./functions/sorteoExpress')
 
 const cron = require('node-cron');
 const PORT = process.env.PORT || 5000
@@ -35,9 +35,13 @@ io.on('connection', async(socket) => {
   // const ahora = new Date()
   // console.log(ahora)
 ///sorteo express/////
-  cron.schedule('37 * * * *', () => {
+  cron.schedule('5 * * * *', () => {
     console.log('se inicio reset')
     resetExpress()
+  })
+  cron.schedule('51 * * * *', () => {
+    console.log('se inicio el sorteo')
+    initExpress()
   })
 
   //////////////////////manejo de cuenta////////////////////////////

@@ -27,4 +27,29 @@ const resetExpress = async()=>{
     }
     
 }
-module.exports = {resetExpress}
+const initExpress = async() => {
+    try{
+        const snapshot = await db.collection('sorteos').get()
+        snapshot.forEach(async(doc) => {
+            const data = doc.data()
+            // console.log('esto es data', data)
+            if (data.typeLot === 'Express'){
+                const numeroGanador = Math.floor(Math.random() * 100)
+                const ganador = data.arryPuestos[numeroGanador]
+                console.log(ganador)
+
+                // await db.collection('sorteos').doc(doc.id).update({
+                //     'arryPuestos': ArrayPuestos,
+                //     'ganador':''
+                // })
+
+            }
+        })
+
+    }catch (error) {
+        console.error('Error al obtener documentos:', error);
+        throw error; // Manejo de errores
+    }
+
+}
+module.exports = {resetExpress, initExpress}
