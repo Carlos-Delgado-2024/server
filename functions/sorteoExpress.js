@@ -8,14 +8,15 @@ const resetExpress = async()=>{
         snapshot.forEach(doc => {
             const data = doc.data()
             console.log('esto es data', data)
-            // if (data.typeLot === 'Express'){
-            //     result.push(data)
-            // }
+            if (data.typeLot === 'Express'){
+                result.push(data)
+            }
         })
     }catch (error) {
         console.error('Error al obtener documentos:', error);
         throw error; // Manejo de errores
     }
+    console.log(result)
     // result.map(async(sorteo)=>{
     //     const ArrayPuestos = []
     //     for(let i = 0; i <= sorteo.puestos-1;i++){
