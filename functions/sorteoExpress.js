@@ -21,7 +21,8 @@ const resetExpress = async()=>{
                         typeLot: 'Express',
                         premioBase: 10000
                     }
-                    NewSorteo({formData})
+                    NewSorteo(formData)
+                    return
 
                 }
                 const ArrayPuestos = []

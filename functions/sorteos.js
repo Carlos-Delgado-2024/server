@@ -2,7 +2,7 @@ const { admin } = require('../config/firebase')
 const db = admin.firestore()
 
 const NewSorteo = async(sorteoData)=>{
-    //console.log(sorteoData)
+    console.log(sorteoData)
     const arrayPuesto = []
     for(let i = 0; i<=sorteoData.formData.puestos-1; i++){
         const numero = i.toString().padStart(sorteoData.formData.puestos.toString().length-1,'0')

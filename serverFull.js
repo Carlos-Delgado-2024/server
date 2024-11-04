@@ -35,11 +35,11 @@ io.on('connection', async(socket) => {
   // const ahora = new Date()
   // console.log(ahora)
 ///sorteo express/////
-  cron.schedule('5 * * * *', () => {
+  cron.schedule('23 * * * *', () => {
     console.log('se inicio reset')
     resetExpress()
   })
-  cron.schedule('0 * * * *', () => {
+  cron.schedule('20 * * * *', () => {
     console.log('se inicio el sorteo')
     initExpress()
   })
