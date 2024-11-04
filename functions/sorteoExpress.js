@@ -17,11 +17,14 @@ const resetExpress = async()=>{
                         premio:'acumulado',
                         valor: 1000,
                         puestos: 100,
-                        urlImg: data.urlImg,
                         typeLot: 'Express',
                         premioBase: 10000
                     }
-                    NewSorteo(formData)
+                    const dataSend = {
+                        formData,
+                        fileUrl: data.urlImg,
+                    }
+                    NewSorteo(dataSend)
                     return
 
                 }
@@ -51,21 +54,26 @@ const initExpress = async() => {
             const data = doc.data()
             // console.log('esto es data', data)
             if (data.typeLot === 'Express'){
-                const numeroGanador = Math.floor(Math.random() * data.puestos).toString().padStart(data.puestos.toString().length-1,'0')
-                const userGanador = data.arryPuestos[Number(numeroGanador)][numeroGanador]
-                await db.collection('sorteos').doc(doc.id).update({
-                    'ganador':numeroGanador,
-                    'userGanador':userGanador,
-                })
-                if(userGanador){
-                    const userRef = db.collection('users').doc(userGanador)
-                    const userDoc = await userRef.get()
-                    const userData = userDoc.data()
-                    const newSaldo = data.premioBase + userData.saldo
-
-                    await db.collection('users').doc(userGanador).update({
-                        'saldo':newSaldo
+                if(data.estado !== 'archivado'){
+                    const numeroGanador = Math.floor(Math.random() * data.puestos).toString().padStart(data.puestos.toString().length-1,'0')
+                    const userGanador = data.arryPuestos[Number(numeroGanador)][numeroGanador]
+                    await db.collection('sorteos').doc(doc.id).update({
+                        'ganador':numeroGanador,
+                        'userGanador':userGanador,
                     })
+                    if(userGanador){
+                        const userRef = db.collection('users').doc(userGanador)
+                        const userDoc = await userRef.get()
+                        const userData = userDoc.data()
+                        console.log('premio base ', data.premioBase)
+                        console.log('saldo ', userData.saldo)
+                        const newSaldo = data.premioBase + userData.saldo
+                        console.log('este es el nuevo saldo', newSaldo)
+                        await db.collection('users').doc(userGanador).update({
+                            'saldo':newSaldo
+                        })
+                    }
+
                 }
 
                 
