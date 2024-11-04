@@ -15,10 +15,10 @@ const resetExpress = async()=>{
                     })
                     const formData = {
                         premio:'acumulado',
-                        valor: 1000,
-                        puestos: 100,
+                        valor: data.valor,
+                        puestos: data.puestos,
                         typeLot: 'Express',
-                        premioBase: 10000
+                        premioBase: data.valor * 10
                     }
                     const dataSend = {
                         formData,
