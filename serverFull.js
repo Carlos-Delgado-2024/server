@@ -28,21 +28,22 @@ const io = new Server(server, {
 
   let count = 0;
 // Cuando un cliente se conecta
+///sorteo express/////
+cron.schedule('55 * * * *', () => {
+  console.log('se inicio reset')
+  resetExpress()
+})
+cron.schedule('52 * * * *', () => {
+  console.log('se inicio el sorteo')
+  initExpress()
+})
 io.on('connection', async(socket) => {
   count += 1
   console.log('Un cliente se ha conectado');
   console.log('clientes conectados', count);
   // const ahora = new Date()
   // console.log(ahora)
-///sorteo express/////
-  cron.schedule('43 * * * *', () => {
-    console.log('se inicio reset')
-    resetExpress()
-  })
-  cron.schedule('41 * * * *', () => {
-    console.log('se inicio el sorteo')
-    initExpress()
-  })
+
 
   //////////////////////manejo de cuenta////////////////////////////
   socket.on('newUser',(data)=>{
