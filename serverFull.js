@@ -29,11 +29,11 @@ const io = new Server(server, {
   let count = 0;
 // Cuando un cliente se conecta
 ///sorteo express/////
-cron.schedule('20 * * * *', () => {
+cron.schedule('10 * * * *', () => {
   console.log('se inicio reset')
   resetExpress()
 })
-cron.schedule('17 * * * *', () => {
+cron.schedule('0 * * * *', () => {
   console.log('se inicio el sorteo')
   initExpress()
 })
